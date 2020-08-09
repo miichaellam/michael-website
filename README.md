@@ -1,2 +1,2 @@
 # michael-website
-personal website for Michael 
+files for michaellam.netlify.app

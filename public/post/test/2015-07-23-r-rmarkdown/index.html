@@ -1,0 +1,1154 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Michael Lam">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Using Google Trends and Twitter to understand blood donation behaviour">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/test/2015-07-23-r-rmarkdown/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#228cc1">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="/post/test/2015-07-23-r-rmarkdown/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Michael Lam">
+  <meta property="og:url" content="/post/test/2015-07-23-r-rmarkdown/">
+  <meta property="og:title" content="Does this work? | Michael Lam">
+  <meta property="og:description" content="Using Google Trends and Twitter to understand blood donation behaviour"><meta property="og:image" content="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-04-12T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-04-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/post/test/2015-07-23-r-rmarkdown/"
+  },
+  "headline": "Does this work?",
+  
+  "datePublished": "2020-04-12T00:00:00Z",
+  "dateModified": "2020-04-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Michael Lam"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Michael Lam",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Using Google Trends and Twitter to understand blood donation behaviour"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Does this work? | Michael Lam</title>
+
+</head>
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Michael Lam</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Michael Lam</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Does this work?</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Apr 12, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/r/">R</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<pre class="r"><code># Library
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.0
+## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(tidytext)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code>library(patchwork)
+library(rtweet)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rtweet&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     flatten</code></pre>
+<pre class="r"><code>theme_set(theme_light())
+
+# Main data
+data&lt;- read_twitter_csv(&#39;finaldf.csv&#39;) 
+timeline_df&lt;- read_twitter_csv(&#39;newbloodtime.csv&#39;)
+
+## looking at &#39;can i donate blood&#39;
+austrnd&lt;- read.csv(&#39;aus.csv&#39;)
+uktrnd&lt;- read.csv(&#39;uk.csv&#39;)
+## Looking at &#39;blood donation&#39;
+aus2 = read.csv(&#39;aus1.csv&#39;)
+uk2 = read.csv(&#39;uk1.csv&#39;)
+# Worldwide
+w_tr&lt;- read.csv(&#39;ww2.csv&#39;)
+w_tr2&lt;-read.csv(&#39;ww.csv&#39;)
+
+# Stop words
+blood_words&lt;- tibble(word = c(&#39;blood&#39;,&#39;donation&#39;,&#39;donations&#39;),
+                     lexicon = &#39;mine&#39;)
+# stop word dictionaries
+blood_stops&lt;- rbind(blood_words,stop_words)</code></pre>
+<div id="google-trends-data" class="section level1">
+<h1>Google Trends Data</h1>
+<div id="cleaning-the-data" class="section level2">
+<h2>Cleaning the data</h2>
+<pre class="r"><code># Can i donate blood
+google_trend&lt;-austrnd%&gt;%inner_join(uktrnd, by =&#39;day&#39;)%&gt;%
+  pivot_longer(c(aus,uk),
+               names_to = &#39;country&#39;,
+               values_to = &#39;search&#39;)%&gt;%
+  mutate(date = dmy(day))
+# blood donation
+#clean up
+trends&lt;- aus2%&gt;%inner_join(uk2, by = &#39;day&#39;)%&gt;%
+  pivot_longer(c(aus,uk), names_to = &#39;country&#39;, values_to = &#39;search&#39;)%&gt;%
+  mutate(date = dmy(day),
+         country = as.factor(country))
+# Worldwide
+world_trend&lt;- inner_join(w_tr,w_tr2, by = &#39;day&#39;)%&gt;%
+  rename(&#39;blood donation&#39; = &#39;bd&#39;,
+         &#39;can i donate blood&#39; = &#39;can&#39;)%&gt;%
+  pivot_longer(c(&#39;blood donation&#39;,&#39;can i donate blood&#39;),
+                           names_to = &#39;search&#39;,
+                           values_to = &#39;interest&#39;)%&gt;%
+  mutate(date = dmy(day))</code></pre>
+</div>
+<div id="creating-the-plots" class="section level2">
+<h2>Creating the plots</h2>
+<pre class="r"><code># Can i donate blood
+gt1&lt;-google_trend%&gt;%
+  ggplot(aes(x = date, y = search, color = country, group = country)) +
+  geom_line(size = 1.5) + theme_bw() + 
+  geom_vline(xintercept = as.numeric(as.Date(&quot;2020-03-12&quot;)), linetype= &#39;solid&#39;, color = &#39;purple&#39; )+
+    geom_label(aes(x=as.Date(&#39;2020-03-12&#39;), label=&quot;COVID-19 classified as pandemic&quot;, y=90),
+               fill = &#39;purple&#39;,color = &#39;white&#39;, vjust = 1.2, size = 4) +
+  geom_label(aes(x=as.Date(&#39;2020-03-12&#39;), label=&quot;March 12&quot;, y=100),fill = &#39;purple&#39;,
+             color = &#39;white&#39;, vjust = 1.2, size = 4) +
+  labs(title = &#39;Google searches for &quot;can i donate blood&quot;&#39;, 
+       caption = &#39;searches between 29/2/20 - 29/3/20&#39;, y = &#39;Search Interest&#39;, x = NULL) + 
+  theme(plot.title = element_text(face = &#39;bold&#39;),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+# Blood Donation
+gt2&lt;-trends%&gt;%
+  ggplot(aes(x = date, y = search, color = country, group = country)) +
+  geom_line(size = 1.5) + 
+  geom_vline(xintercept = as.numeric(as.Date(&quot;2020-03-12&quot;)), linetype= &#39;solid&#39;,
+             color = &#39;purple&#39; ) +
+  geom_label(aes(x=as.Date(&#39;2020-03-12&#39;), label=&quot;COVID-19 classified as pandemic&quot;, y=90),
+             fill = &#39;purple&#39;,color = &#39;white&#39;, vjust = 1.2, size = 4) +
+  geom_label(aes(x=as.Date(&#39;2020-03-12&#39;), label=&quot;March 12&quot;, y=100),
+             fill = &#39;purple&#39;,color = &#39;white&#39;, vjust = 1.2, size = 4) +
+  theme_bw() + 
+  labs(title = &#39;Google searches for &quot;blood donation&quot;&#39;, 
+       caption = &#39;searches between 29/2/20 - 29/3/20&#39;,
+       y = &#39;Search Interest&#39;, x = NULL) + 
+  theme(plot.title = element_text(face = &#39;bold&#39;),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+# combine into dataframe
+ukausplot&lt;- gt1/gt2
+
+# Worldwide
+worldplot&lt;-world_trend%&gt;%
+  ggplot(aes(x = date, y = interest, color = search, group = search)) +
+  geom_line(size = 1.5, alpha = 0.65) + theme_bw() + 
+  geom_vline(xintercept = as.numeric(as.Date(&quot;2020-03-12&quot;)), linetype= &#39;solid&#39;, color = &#39;purple&#39;)+
+    geom_label(aes(x=as.Date(&#39;2020-03-12&#39;), label=&quot;COVID-19 classified as pandemic&quot;, y=94),
+               fill = &#39;purple&#39;,color = &#39;white&#39;, hjust = .8, size = 4) +
+  geom_label(aes(x=as.Date(&#39;2020-03-12&#39;), label=&quot;March 12&quot;, y=100),fill = &#39;purple&#39;,
+             color = &#39;white&#39;,  hjust = 2.6, size = 4) +
+  labs(title = &#39;Google searches worldwide&#39;, color = &#39;search term&#39;,
+       caption = &#39;source: trends.google.com between (2/1/20-30/3/20)&#39;,
+       y = &#39;Search Interest&#39;, x = NULL) + 
+  theme(plot.title = element_text(face = &#39;bold&#39;),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        plot.caption = element_text(face = &#39;italic&#39;))</code></pre>
+<div id="google-searches-in-australia-and-uk-in-march" class="section level3">
+<h3>Google searches in Australia and UK in March</h3>
+<pre class="r"><code>ukausplot</code></pre>
+<p><img src="/post/test/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="google-searches-worldwide" class="section level3">
+<h3>Google searches worldwide</h3>
+<pre class="r"><code>worldplot</code></pre>
+<p><img src="/post/test/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="twitter" class="section level1">
+<h1>Twitter</h1>
+<pre class="r"><code># clean donors
+df&lt;-data%&gt;%distinct(text,.keep_all = T) %&gt;% 
+  mutate(tweet = tolower(text),
+         user = tolower(screen_name))%&gt;% 
+  filter(!str_detect(user, &#39;nhs&#39;))%&gt;%
+  filter(is_retweet == F)%&gt;%
+  filter(!screen_name %in% c(&#39;lifebloodau&#39;,&#39;givebloodNHS&#39;)) %&gt;%  # filtering out blood service tweets
+  mutate(blood_service = as.factor(ifelse(str_detect(mentions_screen_name, &#39;GiveBloodNHS&#39;), &#39;United Kingdom&#39;,&#39;Australia&#39;)), # blood var
+         id = row_number(),
+         favourite = favorite_count,
+         retweet = retweet_count,
+         tweet = str_replace_all(tweet, &quot;@\\w+&quot;,&quot; &quot;),           # remove user names
+         tweet = str_replace_all(tweet, &quot;http.+ |http.+$&quot;, &quot; &quot;), # remove links
+         tweet = str_replace_all(tweet,&quot;[[:punct:]]&quot;, &quot; &quot;), # punctuations
+         tweet = str_replace_all(tweet, &quot;amp&quot;, &quot; &quot;),
+         tweet = str_replace_all(tweet, &quot;[ |\t]{2,}&quot;, &quot; &quot;),
+         tweet = tm::removeNumbers(tweet))# remove numbers
+
+# convert dates to same timezone
+df$date&lt;- lubridate::ymd_hms(df$created_at) # convert to format
+df$date&lt;- lubridate::with_tz(df$date, tzone = &#39;Europe/London&#39;) # standardise all time
+
+donor_trigram&lt;-df%&gt;%select(tweet,blood_service)%&gt;%
+  unnest_tokens(trigram,tweet, token = &#39;ngrams&#39;, n =3) %&gt;%
+  separate(trigram, c(&#39;word1&#39;,&#39;word2&#39;,&#39;word3&#39;), sep = &#39; &#39;)%&gt;%
+  filter(!word1 %in% blood_stops$word,
+         !word2 %in% blood_stops$word,
+         !word3 %in% blood_stops$word)
+
+# assessing most frequent words
+donorplot&lt;-donor_trigram%&gt;%unite(trigram,word1,word2,word3,sep = &quot; &quot;)%&gt;%
+  filter(!str_detect(trigram, &#39;emma&#39;))%&gt;%
+  add_count(trigram)%&gt;%
+  distinct(trigram,.keep_all = T)%&gt;%
+  top_n(7)%&gt;%
+  ggplot(aes(x = reorder(trigram,n), y = n, fill = trigram))+
+  geom_col(show.legend = F) +
+  coord_flip() + 
+  theme_light() +
+  labs(x = NULL, y = &#39;Number of mentions&#39;, title = &#39;Common trigram in donor tweets&#39;,
+       caption = &#39;Common words removed (e.g., donate, and,you)&#39; ) +
+  theme(plot.title = element_text(face = &#39;bold&#39;, hjust = 0.5), axis.text.y = element_text(size = 11),
+        plot.caption = element_text(face = &#39;italic&#39;))</code></pre>
+<pre><code>## Selecting by n</code></pre>
+<div id="looking-at-what-donors-post" class="section level2">
+<h2>Looking at what donors post</h2>
+<p>Tweets are quite short. So lets look at trigrams [explain what this is]. First unnest the words so</p>
+<pre class="r"><code>donor_trigram&lt;-df%&gt;%select(tweet,blood_service)%&gt;%
+  unnest_tokens(trigram,tweet, token = &#39;ngrams&#39;, n =3) %&gt;%
+  separate(trigram, c(&#39;word1&#39;,&#39;word2&#39;,&#39;word3&#39;), sep = &#39; &#39;)%&gt;%
+  filter(!word1 %in% blood_stops$word,
+         !word2 %in% blood_stops$word,
+         !word3 %in% blood_stops$word)</code></pre>
+<p>Now lets turn plot this</p>
+<pre class="r"><code>donor_trigram%&gt;%unite(trigram,word1,word2,word3,sep = &quot; &quot;)%&gt;%
+  filter(!str_detect(trigram, &#39;emma&#39;))%&gt;%
+  add_count(trigram)%&gt;%
+  distinct(trigram,.keep_all = T)%&gt;%
+  top_n(7)%&gt;%
+  ggplot(aes(x = reorder(trigram,n), y = n, fill = trigram))+
+  geom_col(show.legend = F) + coord_flip() + 
+  labs(x = NULL, y = &#39;Number of mentions&#39;, title = &#39;Common trigram in donor tweets&#39;,
+       caption = &#39;Common words removed (e.g., donate, and,you)&#39;) +
+  theme(plot.title = element_text(face = &#39;bold&#39;, hjust = 0.5),
+        plot.caption = element_text(face = &#39;italic&#39;))</code></pre>
+<pre><code>## Selecting by n</code></pre>
+<p><img src="/post/test/2015-07-23-r-rmarkdown_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Lets see what gets retweeted</p>
+<p><em>Read full blog post at</em> <a href="https://research.psy.uq.edu.au/dorn/blog/" class="uri">https://research.psy.uq.edu.au/dorn/blog/</a></p>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/plot/">plot</a>
+  
+  <a class="badge badge-light" href="/tag/r-markdown/">R Markdown</a>
+  
+  <a class="badge badge-light" href="/tag/regression/">regression</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=/post/test/2015-07-23-r-rmarkdown/&amp;text=Does%20this%20work?" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=/post/test/2015-07-23-r-rmarkdown/&amp;t=Does%20this%20work?" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Does%20this%20work?&amp;body=/post/test/2015-07-23-r-rmarkdown/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=/post/test/2015-07-23-r-rmarkdown/&amp;title=Does%20this%20work?" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Does%20this%20work?%20/post/test/2015-07-23-r-rmarkdown/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=/post/test/2015-07-23-r-rmarkdown/&amp;title=Does%20this%20work?" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+    <div class="media author-card content-widget-hr">
+      
+        
+        <img class="avatar mr-3 avatar-circle" src="/author/michael-lam/avatar_hufe237d25f6f83474bff12f448402cea1_1171049_270x270_fill_q90_lanczos_center.jpg" alt="Michael Lam">
+      
+
+      <div class="media-body">
+        <h5 class="card-title"><a href="/">Michael Lam</a></h5>
+        <h6 class="card-subtitle">PhD Candidate</h6>
+        <p class="card-text">My research interests include distributed robotics, mobile computing and programmable matter.</p>
+        <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com.au/citations?user=cRG8pMMAAAAJ&amp;hl=en" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/miichaellam" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+      </div>
+    </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.cbb55fd8eafa574bce72dcb94f65cd2c.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+       &middot; 
+      <a href="/terms/">Terms</a>
+    
+  </p>
+  
+
+  <p class="powered-by">
+    
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

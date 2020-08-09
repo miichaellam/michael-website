@@ -1,0 +1,187 @@
+---
+title: "Using Google Trends and Twitter to understand blood donation behaviour"
+author:
+- admin 
+date: 2020-04-12
+featured: true
+summary: Using Google Trends and Twitter to understand blood donation behaviour
+editor_options: 
+  chunk_output_type: console
+---
+With increasing restricitons and donating blood being one of the few essential activities, I wanted to explore what is happening on Twitter and Google searches to understand blood donor behaviour. Let's start with looking at google searches for terms related to blood donation. I start with the search term "can i donate blood" and first look at Australia and the United Kingdom as I will later look at Twitter accounts from these two country. I will explore the data using R, here are the libraries needed: 
+```{r message=FALSE, warning=FALSE}
+# Library
+library(tidyverse)
+library(tidytext)
+library(lubridate)
+library(patchwork)
+library(rtweet)
+theme_set(theme_light())
+```
+## Google Trend searches
+You can find the same dataset from [Google Trends](https://trends.google.com/) using the same search term and dates as I have done here. Basically, I have two files from google trends; each looking at the same search term for a particular country. I start by reading in the data and do a little cleaning so I can plot the data
+```{r}
+# Load the data
+austrnd<- read.csv('aus.csv')
+uktrnd<- read.csv('uk.csv')
+
+# Can i donate blood
+google_trend<-austrnd%>%inner_join(uktrnd, by ='day')%>%
+  pivot_longer(c(aus,uk),
+               names_to = 'country',
+               values_to = 'search')%>%
+  mutate(date = dmy(day))
+
+```
+
+Looks like there is higher [search interest](https://support.google.com/trends/answer/4365533?hl=en) after the announcement of COVID-19 as a pandemic on the 12th of March. 
+```{r}
+google_trend%>%
+  ggplot(aes(x = date, y = search, )) +
+  geom_line(aes(color = country, group = country),size = 1.5) + theme_bw() + 
+  geom_vline(xintercept = as.numeric(as.Date("2020-03-12")), linetype= 'solid')+
+  geom_label(aes(x=as.Date('2020-03-12'), label="COVID-19 classified as pandemic",y=90),vjust = 1.2, size = 4) +
+  geom_label(aes(x=as.Date('2020-03-12'), label="March 12", y=100), vjust = 1.2, size = 4) +
+  labs(title = 'Google searches for "can i donate blood"',caption = 'searches between 29/2/20 - 29/3/20', y = 'Search Interest', x = NULL) + 
+  theme(plot.title = element_text(face = 'bold'),panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+Now let's scale up and add two changes. What happens if I look at the same search term worldwide and expand the date to the start of the 2020. I repeat the process above here with the new data:
+```{r}
+# Load the data
+w_tr<- read.csv('ww2.csv')
+w_tr2<-read.csv('ww.csv')
+
+# data cleaning
+world_trend<- inner_join(w_tr,w_tr2, by = 'day')%>%
+  rename('blood donation' = 'bd',
+         'can i donate blood' = 'can')%>%
+  pivot_longer(c('blood donation','can i donate blood'),
+                           names_to = 'search',
+                           values_to = 'interest')%>%
+  mutate(date = dmy(day))
+```
+
+The pattern looks pretty clear here with higher search interest after the announcement of the pandemic.
+```{r}
+world_trend%>%
+  ggplot(aes(x = date, y = interest, color = search, group = search)) +
+  geom_line(size = 1.5, alpha = 0.65) + theme_bw() + 
+  geom_vline(xintercept = as.numeric(as.Date("2020-03-12")), linetype= 'solid', color = 'purple') +
+  geom_label(aes(x=as.Date('2020-03-12'), label="COVID-19 classified as pandemic", y=94),fill = 'purple',color = 'white', hjust = .8, size = 4) +
+  geom_label(aes(x=as.Date('2020-03-12'), label="March 12", y=100),fill = 'purple',color = 'white',  hjust = 2.6, size = 4) +
+  labs(title = 'Google searches worldwide', color = 'search term',
+       caption = 'source: trends.google.com between (2/1/20-30/3/20)',
+       y = 'Search Interest', x = NULL) + 
+  theme(plot.title = element_text(face = 'bold'),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        plot.caption = element_text(face = 'italic'))
+```
+
+# Twitter
+Now let's use the [rtweet package](https://github.com/ropensci/rtweet) to get tweets directed to the official blood service twitter accounts in Australia and the United Kingdom. Given the limitation of the API, I downloaded and combined tweets from 17th March to 2nd April. The code below reads in this combined dataset and cleans the tweets to remove things such as punctuations and external links.
+```{r}
+data<- read_twitter_csv('finaldf.csv')%>%
+  distinct(text,.keep_all = T) %>%  # Remove duplicate tweets
+  mutate(tweet = tolower(text),
+         user = tolower(screen_name))%>% 
+  filter(!str_detect(user, 'nhs'))%>% # Remove any tweets from other NHS accounts
+  filter(is_retweet == F)%>% # Remove retwets
+  filter(!screen_name %in% c('lifebloodau','givebloodNHS')) %>%  
+  mutate(blood_service = as.factor(ifelse(str_detect(mentions_screen_name, 'GiveBloodNHS'),'United Kingdom','Australia')), # 
+         id = row_number(),
+         favourite = favorite_count,
+         retweet = retweet_count,
+         tweet = str_replace_all(tweet, "@\\w+"," "),# remove user names
+         tweet = str_replace_all(tweet, "http.+ |http.+$", " "),# remove links
+         tweet = str_replace_all(tweet,"[[:punct:]]", " "),# punctuations
+         tweet = str_replace_all(tweet, "amp", " "),
+         tweet = str_replace_all(tweet, "[ |\t]{2,}", " "),
+         tweet = tm::removeNumbers(tweet), # remove numbers
+         date = with_tz(ymd_hms(created_at),tzone = "Europe/London"),# standardise timezones
+         word_length = str_count(text,'\\w+'))
+```
+
+The tweets are relatively short with an average of 20 words per tweet. Lets take an [n-gram](https://www.tidytextmining.com/ngrams.html) approach and look at words that co-occur with each other.
+```{r message=FALSE, warning=FALSE}
+ggplot(data, aes(x = word_length)) +
+  geom_histogram(fill = "#7A93E6", binwidth = 5) +
+  labs(x = "Words in tweet")
+```
+
+First let's create a custom stop word library to remove words that frequently occur. Since these are tweets about blood donation, lets remove words that are related to the process as they will be common. 
+```{r}
+# Stop words
+blood_words<- tibble(word = c('blood','donation','donations'),
+                     lexicon = 'mine')
+# stop word dictionaries
+blood_stops<- rbind(blood_words,stop_words)
+```
+
+Now lets break down the tweets into single words and at look at common trigrams (three consequective sequences of words)
+```{r message=FALSE, warning=FALSE}
+# Create dataframe of trigrams
+donor_trigram<-data%>%select(tweet,blood_service)%>%
+  unnest_tokens(trigram,tweet, token = 'ngrams', n =3) %>%
+  separate(trigram, c('word1','word2','word3'), sep = ' ')%>%
+  filter(!word1 %in% blood_stops$word,
+         !word2 %in% blood_stops$word,
+         !word3 %in% blood_stops$word)
+
+# assessing most frequent words
+donor_trigram%>%unite(trigram,word1,word2,word3,sep = " ")%>%
+  filter(!str_detect(trigram, 'emma'))%>% # sorry Emma, Happy Birthday!
+  add_count(trigram)%>%
+  distinct(trigram,.keep_all = T)%>%
+  top_n(7)%>%
+  ggplot(aes(x = reorder(trigram,n), y = n, fill = trigram))+
+  geom_col(show.legend = F) +
+  coord_flip() + 
+  theme_light() +
+  labs(x = NULL, y = 'Number of mentions', title = 'Common trigram in donor tweets',
+       caption = 'Common words removed (e.g., donate, and,you)' ) +
+  theme(plot.title = element_text(face = 'bold', hjust = 0.5),
+        plot.caption = element_text(face = 'italic'))
+```
+
+Let's check out what gets people's attention. We will look which trigram gets the most number of favourites.
+```{r message=FALSE, warning=FALSE}
+favdf<- data%>%
+  filter(!hashtags == 'KeepDonating')%>% # remove duplicate tweets
+  select(status_id,tweet,blood_service, retweet, favourite)%>%
+  unnest_tokens(trigram,tweet, token = 'ngrams', n =3) %>%
+  separate(trigram, c('word1','word2','word3'), sep = ' ')%>%
+  filter(!word1 %in% blood_stops$word,
+         !word2 %in% blood_stops$word,
+         !word3 %in% blood_stops$word)%>%
+  unite(trigram, word1,word2,word3, sep = " ")
+
+# putting into format
+trigram_fav<-favdf%>%
+  group_by(status_id,blood_service,trigram)%>%
+  summarise(fav = first(favourite))%>%
+  group_by(blood_service,trigram)%>%
+  summarise(favourite = median(fav), uses = n())%>%
+  filter(favourite !=0)%>% 
+  filter(!str_detect(trigram, 'NA'))%>%
+  ungroup()
+
+
+```
+I am only going to look at trigrams that have been mentioned more than two times and the top five median favourited trigrams. It looks like most of the top favourited trigrams are related to the virus.
+```{r message=FALSE, warning=FALSE}
+trigram_fav%>%
+  filter(uses>2)%>%
+  group_by(blood_service)%>%
+  top_n(5, favourite)%>%
+  arrange(favourite)%>%
+  ggplot(aes(x = reorder(trigram,favourite), y = favourite, fill = blood_service)) +
+  geom_col(show.legend = F)+
+  coord_flip() + theme_bw() +
+  labs(x = NULL, y = 'Median Favourites', title = 'Top 5 Favourited Trigrams',
+       caption = 'including only trigrams that have been mentioned >2 times') +
+    theme(plot.title = element_text(face = 'bold', hjust = .5),
+        plot.caption = element_text(face = 'italic'))
+```
+
+You can read read what I make of all these findings on the full blog post [here](https://research.psy.uq.edu.au/dorn/blog/) or [here](https://www.donateblood.com.au/blog/research/do-people-want-donate-blood-during-coronavirus-pandemic)

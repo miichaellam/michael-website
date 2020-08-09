@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>plot | Michael Lam</title>
+    <link>/tag/plot/</link>
+      <atom:link href="/tag/plot/index.xml" rel="self" type="application/rss+xml" />
+    <description>plot</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sun, 12 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <title>plot</title>
+      <link>/tag/plot/</link>
+    </image>
+    
+    <item>
+      <title>Using Google Trends and Twitter to understand blood donation behaviour</title>
+      <link>/post/twitter/twitter/</link>
+      <pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>/post/twitter/twitter/</guid>
+      <description>
+
+
+&lt;p&gt;With the recent rise in COVID-19, let’s see what is happening on Twitter and Google searches to understand blood donor behaviour. Let’s start with looking at google searches for terms related to blood donation. We will go with “can i donate blood” and “blood donation”. We will also look in Australia and the United Kingdom as we will later look at Twitter account in these two country. You can find the same data on trends.google.com, the files i read in were pre-cleaned. First load the necessary libaries&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Library
+library(tidyverse)
+library(tidytext)
+library(lubridate)
+library(patchwork)
+library(rtweet)
+theme_set(theme_light())&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;google-trend-searches&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Google Trend searches&lt;/h2&gt;
+&lt;p&gt;You can find the same dataset from &lt;a href=&#34;https://trends.google.com/&#34;&gt;Google Trends&lt;/a&gt; by entering the same search term and dates as I have done here. Basically, I have two files from google trends; each looking at the specific search term for a particular country. I then do a little clean and combine them to plot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data
+austrnd&amp;lt;- read.csv(&amp;#39;aus.csv&amp;#39;)
+uktrnd&amp;lt;- read.csv(&amp;#39;uk.csv&amp;#39;)
+
+# Can i donate blood
+google_trend&amp;lt;-austrnd%&amp;gt;%inner_join(uktrnd, by =&amp;#39;day&amp;#39;)%&amp;gt;%
+  pivot_longer(c(aus,uk),
+               names_to = &amp;#39;country&amp;#39;,
+               values_to = &amp;#39;search&amp;#39;)%&amp;gt;%
+  mutate(date = dmy(day))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Looks like there is higher &lt;a href=&#34;https://support.google.com/trends/answer/4365533?hl=en&#34;&gt;search interest&lt;/a&gt; after the announcement of COVID-19 as a pandemic.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;google_trend%&amp;gt;%
+  ggplot(aes(x = date, y = search, color = country, group = country)) +
+  geom_line(size = 1.5) + theme_bw() + 
+  geom_vline(xintercept = as.numeric(as.Date(&amp;quot;2020-03-12&amp;quot;)), linetype= &amp;#39;solid&amp;#39;, color = &amp;#39;purple&amp;#39; )+
+    geom_label(aes(x=as.Date(&amp;#39;2020-03-12&amp;#39;), label=&amp;quot;COVID-19 classified as pandemic&amp;quot;, y=90),
+               fill = &amp;#39;purple&amp;#39;,color = &amp;#39;white&amp;#39;, vjust = 1.2, size = 4) +
+  geom_label(aes(x=as.Date(&amp;#39;2020-03-12&amp;#39;), label=&amp;quot;March 12&amp;quot;, y=100),fill = &amp;#39;purple&amp;#39;,
+             color = &amp;#39;white&amp;#39;, vjust = 1.2, size = 4) +
+  labs(title = &amp;#39;Google searches for &amp;quot;can i donate blood&amp;quot;&amp;#39;, 
+       caption = &amp;#39;searches between 29/2/20 - 29/3/20&amp;#39;, y = &amp;#39;Search Interest&amp;#39;, x = NULL) + 
+  theme(plot.title = element_text(face = &amp;#39;bold&amp;#39;),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/twitter/twitter_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now let’s scale up and add two changes. What happens if we look at the same search term worldwide and expand the date to the start of the 2020. Get the data and do a bit of cleaning:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load the data
+w_tr&amp;lt;- read.csv(&amp;#39;ww2.csv&amp;#39;)
+w_tr2&amp;lt;-read.csv(&amp;#39;ww.csv&amp;#39;)
+
+# data cleaning
+world_trend&amp;lt;- inner_join(w_tr,w_tr2, by = &amp;#39;day&amp;#39;)%&amp;gt;%
+  rename(&amp;#39;blood donation&amp;#39; = &amp;#39;bd&amp;#39;,
+         &amp;#39;can i donate blood&amp;#39; = &amp;#39;can&amp;#39;)%&amp;gt;%
+  pivot_longer(c(&amp;#39;blood donation&amp;#39;,&amp;#39;can i donate blood&amp;#39;),
+                           names_to = &amp;#39;search&amp;#39;,
+                           values_to = &amp;#39;interest&amp;#39;)%&amp;gt;%
+  mutate(date = dmy(day))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The pattern looks pretty clear here with higher search interest after the announcement of the pandemic.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;world_trend%&amp;gt;%
+  ggplot(aes(x = date, y = interest, color = search, group = search)) +
+  geom_line(size = 1.5, alpha = 0.65) + theme_bw() + 
+  geom_vline(xintercept = as.numeric(as.Date(&amp;quot;2020-03-12&amp;quot;)), linetype= &amp;#39;solid&amp;#39;, color = &amp;#39;purple&amp;#39;)+
+    geom_label(aes(x=as.Date(&amp;#39;2020-03-12&amp;#39;), label=&amp;quot;COVID-19 classified as pandemic&amp;quot;, y=94),
+               fill = &amp;#39;purple&amp;#39;,color = &amp;#39;white&amp;#39;, hjust = .8, size = 4) +
+  geom_label(aes(x=as.Date(&amp;#39;2020-03-12&amp;#39;), label=&amp;quot;March 12&amp;quot;, y=100),fill = &amp;#39;purple&amp;#39;,
+             color = &amp;#39;white&amp;#39;,  hjust = 2.6, size = 4) +
+  labs(title = &amp;#39;Google searches worldwide&amp;#39;, color = &amp;#39;search term&amp;#39;,
+       caption = &amp;#39;source: trends.google.com between (2/1/20-30/3/20)&amp;#39;,
+       y = &amp;#39;Search Interest&amp;#39;, x = NULL) + 
+  theme(plot.title = element_text(face = &amp;#39;bold&amp;#39;),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        plot.caption = element_text(face = &amp;#39;italic&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/twitter/twitter_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;twitter&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Twitter&lt;/h1&gt;
+&lt;p&gt;Now let’s use the &lt;a href=&#34;https://github.com/ropensci/rtweet&#34;&gt;Rtweet package&lt;/a&gt; to get tweets directed to the official blood service twitter accounts in Australia and the United Kingdom. Given the limitation of the API, I downloaded and combined tweets from 17th March to 2nd April. The code below reads in this combined dataset and cleans the tweets a bit to remove things such as punctuations and external links.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data&amp;lt;- read_twitter_csv(&amp;#39;finaldf.csv&amp;#39;)%&amp;gt;%
+  distinct(text,.keep_all = T) %&amp;gt;%  # Remove duplicate tweets
+  mutate(tweet = tolower(text),
+         user = tolower(screen_name))%&amp;gt;% 
+  filter(!str_detect(user, &amp;#39;nhs&amp;#39;))%&amp;gt;% # Remove any tweets from other NHS accounts
+  filter(is_retweet == F)%&amp;gt;% # Remove retwets
+  filter(!screen_name %in% c(&amp;#39;lifebloodau&amp;#39;,&amp;#39;givebloodNHS&amp;#39;)) %&amp;gt;%  # filtering out blood service tweets
+  mutate(blood_service = as.factor(ifelse(str_detect(mentions_screen_name, &amp;#39;GiveBloodNHS&amp;#39;), 
+                                          &amp;#39;United Kingdom&amp;#39;,&amp;#39;Australia&amp;#39;)), # 
+         id = row_number(),
+         favourite = favorite_count,
+         retweet = retweet_count,
+         tweet = str_replace_all(tweet, &amp;quot;@\\w+&amp;quot;,&amp;quot; &amp;quot;),           # remove user names
+         tweet = str_replace_all(tweet, &amp;quot;http.+ |http.+$&amp;quot;, &amp;quot; &amp;quot;), # remove links
+         tweet = str_replace_all(tweet,&amp;quot;[[:punct:]]&amp;quot;, &amp;quot; &amp;quot;), # punctuations
+         tweet = str_replace_all(tweet, &amp;quot;amp&amp;quot;, &amp;quot; &amp;quot;),
+         tweet = str_replace_all(tweet, &amp;quot;[ |\t]{2,}&amp;quot;, &amp;quot; &amp;quot;),
+         tweet = tm::removeNumbers(tweet), # remove numbers
+         date = with_tz(ymd_hms(created_at),tzone = &amp;quot;Europe/London&amp;quot;), # standardise timezones
+         word_length = str_count(text,&amp;#39;\\w+&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The tweets are relatively short with an average of 20 words per tweet. Lets take an &lt;a href=&#34;https://www.tidytextmining.com/ngrams.html&#34;&gt;n-gram&lt;/a&gt; approach and look at words that co-occur with each other.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data, aes(x = word_length)) +geom_histogram() +
+  labs(x = &amp;quot;Words in tweet&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/twitter/twitter_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;First let’s create a custom stop word library to remove words that frequently occur. Since these are tweets about blood donation, lets remove words that are related to the process as they will be common.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Stop words
+blood_words&amp;lt;- tibble(word = c(&amp;#39;blood&amp;#39;,&amp;#39;donation&amp;#39;,&amp;#39;donations&amp;#39;),
+                     lexicon = &amp;#39;mine&amp;#39;)
+# stop word dictionaries
+blood_stops&amp;lt;- rbind(blood_words,stop_words)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now lets break down the tweets into single words and look&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;donor_trigram&amp;lt;-data%&amp;gt;%select(tweet,blood_service)%&amp;gt;%
+  unnest_tokens(trigram,tweet, token = &amp;#39;ngrams&amp;#39;, n =3) %&amp;gt;%
+  separate(trigram, c(&amp;#39;word1&amp;#39;,&amp;#39;word2&amp;#39;,&amp;#39;word3&amp;#39;), sep = &amp;#39; &amp;#39;)%&amp;gt;%
+  filter(!word1 %in% blood_stops$word,
+         !word2 %in% blood_stops$word,
+         !word3 %in% blood_stops$word)
+
+# assessing most frequent words
+donor_trigram%&amp;gt;%unite(trigram,word1,word2,word3,sep = &amp;quot; &amp;quot;)%&amp;gt;%
+  filter(!str_detect(trigram, &amp;#39;emma&amp;#39;))%&amp;gt;% # sorry Emma, Happy Birthday!
+  add_count(trigram)%&amp;gt;%
+  distinct(trigram,.keep_all = T)%&amp;gt;%
+  top_n(7)%&amp;gt;%
+  ggplot(aes(x = reorder(trigram,n), y = n, fill = trigram))+
+  geom_col(show.legend = F) +
+  coord_flip() + 
+  theme_light() +
+  labs(x = NULL, y = &amp;#39;Number of mentions&amp;#39;, title = &amp;#39;Common trigram in donor tweets&amp;#39;,
+       caption = &amp;#39;Common words removed (e.g., donate, and,you)&amp;#39; ) +
+  theme(plot.title = element_text(face = &amp;#39;bold&amp;#39;, hjust = 0.5), axis.text.y = element_text(size = 11),
+        plot.caption = element_text(face = &amp;#39;italic&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Selecting by n&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/twitter/twitter_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let’s check out what gets people’s attention. We will look which trigram gets the most number of favourites.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;favdf&amp;lt;- data%&amp;gt;%
+  filter(!hashtags == &amp;#39;KeepDonating&amp;#39;)%&amp;gt;% # a few duplicate tweets saying the same thing
+  select(status_id,tweet,blood_service, retweet, favourite)%&amp;gt;%
+  unnest_tokens(trigram,tweet, token = &amp;#39;ngrams&amp;#39;, n =3) %&amp;gt;%
+  separate(trigram, c(&amp;#39;word1&amp;#39;,&amp;#39;word2&amp;#39;,&amp;#39;word3&amp;#39;), sep = &amp;#39; &amp;#39;)%&amp;gt;%
+  filter(!word1 %in% blood_stops$word,
+         !word2 %in% blood_stops$word,
+         !word3 %in% blood_stops$word)%&amp;gt;%
+  unite(trigram, word1,word2,word3, sep = &amp;quot; &amp;quot;)
+# putting into format
+trigram_fav&amp;lt;-favdf%&amp;gt;%
+  group_by(status_id,blood_service,trigram)%&amp;gt;%
+  summarise(fav = first(favourite))%&amp;gt;%
+  group_by(blood_service,trigram)%&amp;gt;%
+  summarise(favourite = median(fav), uses = n())%&amp;gt;%
+  filter(favourite !=0)%&amp;gt;% 
+  filter(!str_detect(trigram, &amp;#39;NA&amp;#39;))%&amp;gt;%
+  ungroup()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `summarise()` regrouping output by &amp;#39;status_id&amp;#39;, &amp;#39;blood_service&amp;#39; (override with `.groups` argument)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `summarise()` regrouping output by &amp;#39;blood_service&amp;#39; (override with `.groups` argument)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# plotting
+favplot&amp;lt;-trigram_fav%&amp;gt;%
+  filter(uses&amp;gt;2)%&amp;gt;%
+  group_by(blood_service)%&amp;gt;%
+  top_n(5, favourite)%&amp;gt;%
+  arrange(favourite)%&amp;gt;%
+  ggplot(aes(x = reorder(trigram,favourite), y = favourite, fill = blood_service)) +
+  geom_col(show.legend = F)+
+  coord_flip() + theme_bw() +
+  labs(x = NULL, y = &amp;#39;Median Favourites&amp;#39;, title = &amp;#39;Top 5 Favourited Trigrams&amp;#39;,
+       caption = &amp;#39;including only trigrams that have been mentioned &amp;gt;2 times&amp;#39;) +
+    theme(plot.title = element_text(face = &amp;#39;bold&amp;#39;, hjust = .5),
+        plot.caption = element_text(face = &amp;#39;italic&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can read read what I make of all these findings on the full blog post &lt;a href=&#34;https://research.psy.uq.edu.au/dorn/blog/&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
